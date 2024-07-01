@@ -1,5 +1,5 @@
 /.venv
-/log.csv
+log.csv
 .env
 creds/
 example.txt
