@@ -9,6 +9,8 @@ Python script to:
 - Copy the shortened link to clipboard
 - Show an alert
 
+Also built as standalone executable (`pyinstaller -F watchupload.py`) that can be run from `./dist/watchupload`.
+
 ## 1. Create bucket & service account on Google Cloud
 
 Follow the instructions in the first part of [this article](https://medium.com/google-cloud/automating-google-cloud-storage-management-with-python-92ba64ec8ea8)
