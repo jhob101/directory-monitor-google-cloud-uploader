@@ -1,0 +1,7 @@
+/.venv
+log.csv
+.env
+creds/
+example.txt
+.idea
+build
