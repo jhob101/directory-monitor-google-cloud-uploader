@@ -1,6 +1,5 @@
 import os
 import time
-import subprocess
 import requests
 from google.cloud import storage
 from watchdog.observers import Observer
@@ -15,8 +14,17 @@ class FileChangedHandler(FileSystemEventHandler):
         self.extensions = extensions
 
     def on_created(self, event):
+        file_size = -1
+        while file_size != os.path.getsize(event.src_path):
+            # File is streaming and increasing in size
+            file_size = os.path.getsize(event.src_path)
+
+            # Wait 3 seconds before checking again.  Kooha didn't always seem to update every second so adding longer delay
+            # to mitigate premature exit.
+            time.sleep(3)
+
         if (not event.is_directory and os.path.isfile(event.src_path)
-                and (self.extensions is False or any(event.src_path.endswith(ext)) for ext in self.extensions)):
+                and (self.extensions is False or (any(event.src_path.endswith(ext)) for ext in self.extensions))):
             run_process(event.src_path)
 
 
@@ -105,10 +113,15 @@ def shorten_url(url):
 def copy_to_clipboard(text):
     try:
         pyperclip.copy(text)
-        subprocess.Popen(['notify-send', 'Copied to clipboard: ' + text])
+        # subprocess.Popen(['notify-send', 'Copied to clipboard: ' + text])
+        show_notifiation("Link copied to clipboard", text)
         return True
     except pyperclip.PyperclipException:
         return False
+
+
+def show_notifiation(title, message):
+    os.system('notify-send "' + title + '" "' + message + '"')
 
 
 def log_to_file(text):
